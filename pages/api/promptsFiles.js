@@ -22,6 +22,11 @@ const getDirectoryData = (basePath, lang) => {
 
 export default function handler(req, res) {
   const { lang = 'en' } = req.query;
+  // Validate 'lang' to only allow known language codes (two lowercase letters)
+  const allowedLangs = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'zh', 'ja', 'ko']; // Extend as needed
+  if (!allowedLangs.includes(lang)) {
+    return res.status(400).json({ error: 'Invalid language code' });
+  }
   const promptsPath = path.join(process.cwd(), 'pages/prompts');
   const metaFilePath = path.join(promptsPath, `_meta.${lang}.json`);
   let folderMappings = {};
