@@ -4,7 +4,13 @@ import path from 'path';
 
 export default function handler(req, res) {
   const { section = 'research', lang = 'en' } = req.query;
-  const directoryPath = path.join(process.cwd(), 'pages', section);
+  const baseDirectory = path.join(process.cwd(), 'pages');
+  const directoryPath = path.resolve(baseDirectory, section);
+  // Prevent directory traversal: ensure resolved path is within the base directory
+  if (!directoryPath.startsWith(baseDirectory + path.sep)) {
+    res.status(400).json({ error: 'Invalid section' });
+    return;
+  }
   const metaFilePath = path.join(directoryPath, `_meta.${lang}.json`);
 
   let titles = {};
